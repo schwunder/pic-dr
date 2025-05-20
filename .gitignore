@@ -1,0 +1,4 @@
+*.sqlite
+/venv
+assets
+public/favicon.ico
