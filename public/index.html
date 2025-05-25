@@ -2,76 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dim-Reduction Playground</title>
+  <title>DR Playground</title>
+
+  <!-- core + plugins -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
   <script src="https://d3js.org/d3-quadtree.v3.min.js"></script>
   <script src="https://d3js.org/d3-force.v3.min.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v3.min.js"></script>
   <script src="https://d3js.org/d3-transition.v3.min.js"></script>
-  <style>
-    /* ─── overall reset ───────────────────────────────────────── */
-    * { box-sizing:border-box; }
-    html, body { margin:0; height:100%; font-family:system-ui,sans-serif; }
 
-    /* ─── control bar (top) ───────────────────────────────────── */
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin:0; height:100%; font-family:system-ui,sans-serif; overflow:hidden; }
+
+    /* ─── top bar ───────────────────────────────────────── */
     #bar {
-      display:flex; flex-wrap:wrap; gap:1rem;
-      padding:1rem; background:#fff;
-      box-shadow:0 1px 4px rgba(0,0,0,.05);
-      z-index:10;
+      position:absolute; top:0; left:0; right:0;
+      background:#fff; padding:.5rem; display:flex; gap:1rem; align-items:center;
+      box-shadow:0 1px 4px rgba(0,0,0,.1); z-index:10;
     }
     #bar label { display:flex; flex-direction:column; font-size:.9rem; }
-    #status   { align-self:center; }
+    #bar input, #bar select { font-size:1rem; }
+    #status { color:#555; }
 
-    /* ─── slider grid (collapsible) ───────────────────────────── */
+    /* ─── param sliders ────────────────────────────────── */
     #params {
+      position:absolute; top:3rem; left:0; right:0;
       display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:1rem; padding:1rem; background:#fff;
+      gap:1rem; padding:1rem; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.05);
+      z-index:9;
     }
     .param-row { display:flex; align-items:center; gap:.5rem; }
     .param-row label { flex:0 0 100px; font-size:.85rem; }
 
-    /* ─── main viewport ───────────────────────────────────────── */
+    /* ─── viewport ─────────────────────────────────────── */
     #viewport {
-      flex:1 1 auto;                     /* fills remaining height */
+      position:absolute; top:6rem; bottom:0; left:0; right:0;
       display:flex; overflow:hidden;
-      height:calc(100% - 200px);         /* crude but simple */
     }
-
-    /* canvas + side pane */
-    #canvas   { width:100%; }
+    #canvas { flex:1 1 auto; background:#fafafa; }
     .show-resized #canvas { width:50vw; }
-    #resized  {
+
+    #resized {
       display:none; width:0; overflow:auto; flex-direction:column;
-      padding:1rem; background:#fafafa;
+      padding:1rem; background:#fff; border-left:1px solid #ddd;
     }
     .show-resized #resized { display:flex; width:50vw; }
 
-    /* misc */
-    img { max-width:100%; height:auto; }
-    pre { background:#eee; padding:.5rem; max-height:10rem; overflow:auto; }
+    #resized img { max-width:100%; margin-bottom:1rem; }
+    #resized p, #resized pre { margin:0 0 .5rem; }
+    pre { background:#eee; padding:.5rem; overflow:auto; max-height:200px; }
   </style>
 </head>
 
 <body>
-  <!-- ──────────── controls ──────────── -->
+  <!-- controls -->
   <div id="bar">
-    <label>Method          <select id="method"></select></label>
-    <label>Subset Strategy <select id="strategy"></select></label>
-    <label>Subset Size     <input id="subset" type="number" min="1" max="500" value="250"></label>
+    <label>Method
+      <select id="method"></select>
+    </label>
+    <label>Subset
+      <select id="strategy"></select>
+    </label>
+    <label>Size
+      <input id="subset" type="number" min="1" max="500" value="250"/>
+    </label>
     <button id="run">Run</button>
-    <span id="status"></span>
+    <span id="status">Idle</span>
   </div>
 
-  <!-- sliders (renders dynamically) -->
+  <!-- dynamic sliders -->
   <div id="params"></div>
 
-  <!-- ──────────── viewer ──────────── -->
+  <!-- viewer + detail -->
   <div id="viewport">
-    <canvas id="canvas" width="800" height="600"></canvas>
-
-    <!-- side-pane for detail view -->
+    <canvas id="canvas"></canvas>
     <div id="resized">
       <div id="image"></div>
       <p id="name"></p>
@@ -85,7 +91,6 @@
     </div>
   </div>
 
-  <!-- the all-in-one script you integrated earlier -->
-  <script src="/main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
